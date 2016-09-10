@@ -34,13 +34,11 @@ export default function transformer(file, api, options) {
             .filter(t => t.funcProtoAssignment.length)
     }
 
-    identifyErrorType().forEach(t => {
 
+    identifyErrorType().forEach(t => {
         let destSource = destRoot
             .find(j.Program)
             .replaceWith(p => {
-                // console.log('body', p.node.body)
-                // console.log('proto',t.funcProtoAssignment.map(p => p.node))
                 return j.program([
                     ...p.node.body,
                     t.funcDecl.node,
@@ -48,10 +46,9 @@ export default function transformer(file, api, options) {
                 ]);
             })
             .toSource(options.printOptions || {quote: 'single'});
-        console.log(destSource);
+
         fs.writeFileSync(destFile.path, destSource)
-    });
-    identifyErrorType().forEach(t=>{
+
         t.funcDecl.replace()
         t.funcProtoAssignment.forEach(fpa=>fpa.replace())
     })
