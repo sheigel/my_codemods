@@ -2,56 +2,71 @@ export default function transformer(file, api, options) {
     let fs = require('fs')
     let path = require('path')
 
-    const j = api.jscodeshift;
-    const {expression, statement, statements} = j.template;
-    const sourceRoot = j(file.source);
+    const j = api.jscodeshift
+    const {expression, statement, statements} = j.template
+    const sourceRoot = j(file.source)
 
-    let destFilePath = `${path.dirname(file.path)}/output.js`;
+    let destFilePath = `${path.dirname(file.path)}/output.js`
 
     fs.existsSync(destFilePath) || fs.writeFileSync(destFilePath, "")
     let destFile = {path: destFilePath, source: fs.readFileSync(destFilePath).toString()}
 
-    const destRoot = j(destFile.source);
+    let destRoot = j(destFile.source)
 
     let identifyErrorType = () => {
         return sourceRoot
             .find(j.FunctionDeclaration)
             .filter(p => p.node.id.name.indexOf('Error') >= 0)
             .paths()
-            .map(p => {
+            .map(funcDecl => {
+                let funcProtoAssignment = sourceRoot
+                    .find(j.ExpressionStatement, {
+                        expression: {
+                            type: j.AssignmentExpression.name,
+                            left: {object: {name: funcDecl.node.id.name}}
+                        }
+                    })
+                    .paths()
+                if (!funcProtoAssignment.length) {
+                    return null
+                }
+
                 return {
-                    funcDecl: p,
-                    funcProtoAssignment: sourceRoot
-                        .find(j.ExpressionStatement, {
-                            expression: {
-                                type: j.AssignmentExpression.name,
-                                left: {object: {name: p.node.id.name}}
-                            }
-                        })
-                        .paths()
+                    funcDecl,
+                    funcProtoAssignment: funcProtoAssignment[0]
                 }
             })
-            .filter(t => t.funcProtoAssignment.length)
+            .filter(t => t)
+
     }
+    let copyErrorTypesTo = (errorTypes, destRoot) =>
+        errorTypes
+            .map(pathsOfType => ({
+                funcDecl: pathsOfType.funcDecl.node, funcProtoAssignment: pathsOfType.funcProtoAssignment.node
+            }))
+            .forEach(t => {
+                destRoot
+                    .find(j.Program)
+                    .replaceWith(p => {
+                        return j.program([
+                            ...p.node.body,
+                            t.funcDecl,
+                            t.funcProtoAssignment
+                        ])
+                    })
 
-
-    identifyErrorType().forEach(t => {
-        let destSource = destRoot
-            .find(j.Program)
-            .replaceWith(p => {
-                return j.program([
-                    ...p.node.body,
-                    t.funcDecl.node,
-                    ...t.funcProtoAssignment.map(p => p.node)
-                ]);
             })
-            .toSource(options.printOptions || {quote: 'single'});
 
-        fs.writeFileSync(destFile.path, destSource)
+    copyErrorTypesTo(identifyErrorType(), destRoot)
+    let destSource = destRoot.toSource(options.printOptions || {quote: 'single'})
+    fs.writeFileSync(destFile.path, destSource)
 
+    //remove error type definition paths from original file
+    identifyErrorType().forEach(t => {
         t.funcDecl.replace()
-        t.funcProtoAssignment.forEach(fpa=>fpa.replace())
+        t.funcProtoAssignment.replace()
+
     })
 
-    return sourceRoot.toSource(options.printOptions || {quote: 'single'});
-};
+    return sourceRoot.toSource(options.printOptions || {quote: 'single'})
+}
