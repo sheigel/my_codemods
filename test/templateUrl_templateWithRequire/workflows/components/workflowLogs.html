@@ -1,0 +1,10 @@
+<div class="comment" ng-class="{'reject-log': action.action === 'reject'}">
+    {{:: action.getActionMessage(insideSection) }} by
+    <img class="comment__user-image" ng-src="{{:: action.user.profilePictureURL || '/img/profile-default.png' }}"> <span
+        class="bold-text">{{:: action.user.fullName}}</span> on
+    <span class="bold-text">{{:: getDate(action.date)}}</span>
+    at
+    <span class="bold-text">{{:: getHours(action.date)}}</span>
+    <div class="italic-text" ng-if="action.comments">"{{ action.getComments()}}"</div>
+</div>
+

@@ -1,0 +1,81 @@
+<div>
+    <uib-accordion-group id="step{{vm.index}}" is-open="vm.section.isExpanded">
+        <uib-accordion-heading>
+            <h4 class="question-title">
+                <span class="title">Impact Assessment Summary</span>
+                <span class="panel-arrow"></span>
+            </h4>
+        </uib-accordion-heading>
+        <div ng-hide="vm.workflow.content.impactAssessment.state !== 'approved'" class="question-panel clearfix">
+            <div class="summary-div">
+                <p class="semi-bold-text has-margin-bottom-10">Change Risk/Impact Classification:</p>
+                <risk-impact-classification workflow="vm.workflow"></risk-impact-classification>
+            </div>
+
+            <div class="summary-div col-md-12 clearfix">
+                <p class="semi-bold-text">Your change impacts Life Cycle Documents. The following documents should be
+                    evaluated:</p>
+                <p class="semi-bold-text">Please select one or more documents from this list:</p>
+                <div class="clearfix">
+                    <div class="document icon-icn_AssessmentStep_Complete" ng-class="{'to-check': document.selected,
+                    'no-pointer': vm.workflow.content.impactAssessmentSummary.state === 'approved'}"
+                         ng-repeat="document in vm.workflow.content.impactAssessmentSummary.documents"
+                         ng-click="vm.toggleDocumentCollection(document)">
+                        <span>{{document.name}}</span>
+                    </div>
+                </div>
+                <button ng-show="vm.workflow.content.impactAssessmentSummary.editable"
+                        class="bold-text action-gray-btn"
+                        ngf-select="vm.uploadFiles($files, $invalidFiles)"
+                        multiple
+                        ngf-max-size="15MB"
+                ><img class="add-docs-icon" src="../../../img/paperclip@2x.png"/>ADD DOCUMENT
+                </button>
+            </div>
+            <div class="summary-div col-md-12 clearfix" ng-if="vm.showStatement()">
+                <p class="bold-text"> Your change affects multi-sites/multiple system owners as such a communication
+                    plan is recommended.</p>
+            </div>
+            <div class="summary-div col-md-12 has-padding-0">
+                <div ng-show="vm.workflow.content.initiation.priority === 'emergency'"
+                     class="col-md-6 action-button--side-div has-padding-0"
+                     ng-click="vm.toggleCompleteImplementation()">
+                    <span ng-class="{'icon-icn_Checkbox_unchecked': !vm.completeImplementation, 'icon-icn_Checkbox_checked': vm.completeImplementation}">
+                        <span class="path1"></span><span class="path2"></span>
+                    </span>
+                    <span>No further implementation activities required</span>
+                </div>
+                <div class="col-md-6 has-padding-0 pull-right"
+                     ng-show="vm.workflow.content.changeDescriptions.length !== 0"
+                     ng-class="{'disabled-events': vm.isNotApprovedButLocked()}">
+                    <button ng-show="vm.workflow.content.impactAssessmentSummary.state === 'approved'" type="button"
+                            class="green-btn has-margin-top-10 pull-right disabled">APPROVED
+                    </button>
+                    <button ng-hide="vm.workflow.content.impactAssessmentSummary.state === 'approved' || !vm.permissions.isOwner"
+                            type="button" class="has-margin-top-10 pull-right"
+                            ng-class="{'green-btn' : vm.workflow.content.impactAssessmentSummary.state === 'started', 'simple-style-btn side-btn': vm.workflow.content.impactAssessmentSummary.state === 'approval',
+                            'disabled': !vm.workflow.content.impactAssessmentSummary.editable}"
+                            ng-click="vm.openSendForModal(vm.getTaskDetails(), 'approve')">
+                        {{vm.workflow.content.impactAssessmentSummary.state === 'approval' ? 'Edit Approval Request' :
+                        'SEND FOR APPROVAL'}}
+                    </button>
+                    <div class="pull-right has-margin-top-10" ng-show="vm.hasTasks() && !vm.hasCompletedApproveTask">
+                        <button type="button" class="green-btn has-margin-right-10"
+                                ng-click="vm.openReviewApproveModal(vm.getTaskDetails(), 'approve')">
+                            Approve
+                        </button>
+                        <button type="button" class="orange-btn"
+                                ng-click="vm.openReviewApproveModal(vm.getTaskDetails(), 'reject')">
+                            Reject
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 has-padding-0 clearfix">
+                    <div class="approval-entry centered-content" ng-repeat="action in vm.logs | orderBy:'+date' ">
+                        <workflow-logs action="action" inside-section="true"></workflow-logs>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion-group>
+</div>

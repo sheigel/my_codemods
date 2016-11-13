@@ -1,0 +1,151 @@
+<div>
+    <uib-accordion-group id="step0" is-open="vm.section.isExpanded">
+        <uib-accordion-heading>
+            <h4 class="question-title">
+                <span class="title">Initiation</span>
+                <span class="panel-arrow"></span>
+            </h4>
+        </uib-accordion-heading>
+        <div class="question-panel">
+            <div class="question-area clearfix">
+                <form class="custom-form">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="vertically-justified">
+                                <div class="col-md-3 has-padding-0"><span class="input-label semi-bold-text">Change Title</span>
+                                </div>
+                                <div class="col-md-9 has-padding-0">
+                                    <input ng-class="{'disabled': vm.workflow.content.initiation.state === 'approved'  || !vm.permissions.isOwner}" type="text" class="custom-input full-width"
+                                           placeholder="e.g. Service Provider change"
+                                           ng-model="vm.workflow.content.initiation.title"/>
+                                </div>
+                            </div>
+                            <div ng-class="{'disabled': vm.sectionApprovedOrUserNotOwner()}" class="col-md-12 panel panel-default has-padding-0">
+                                <div class="panel-heading">
+                                    <div class="panel-title question-title clearfix">
+                                        <div class="col-md-3 has-padding-0 semi-bold-text">Change Priority</div>
+                                        <div class="col-md-9 has-padding-0">
+                                            <div class="answer-group col-md-4" ng-click="vm.changePriority('normal')">
+                                            <span ng-class="{'icon-icn_AssessmentStep_Complete fake-completed-btn': vm.workflow.content.initiation.priority === 'normal',
+                                            'fake-deselected-radio-btn': vm.workflow.content.initiation.priority !== 'normal'}">
+                                                <span class="path1"><span class="path2"></span></span>
+                                            </span>
+                                                <span class="answer-text">Normal change</span>
+                                            </div>
+                                            <div class="answer-group col-md-4"
+                                                 ng-click="vm.changePriority('emergency')">
+                                            <span ng-class="{'icon-icn_AssessmentStep_Complete fake-completed-btn': vm.workflow.content.initiation.priority === 'emergency',
+                                            'fake-deselected-radio-btn': vm.workflow.content.initiation.priority !== 'emergency'}">
+                                                <span class="path1"><span class="path2"></span></span>
+                                            </span>
+                                                <span class="answer-text">Emergency change</span>
+                                            </div>
+                                            <div class="answer-group col-md-4" ng-click="vm.changePriority('standard')">
+                                            <span ng-class="{'icon-icn_AssessmentStep_Complete fake-completed-btn': vm.workflow.content.initiation.priority === 'standard',
+                                            'fake-deselected-radio-btn': vm.workflow.content.initiation.priority !== 'standard'}">
+                                                    <span class="path1"><span class="path2"></span></span>
+                                                </span>
+                                                <span class="answer-text">Standard change</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-collapse question-panel inner-panel">
+                                    <div class="panel-body">
+                                        <div ng-if="vm.workflow.content.initiation.priority === 'emergency'"
+                                             class="has-padding-20">
+                                            <div ng-repeat="scope in vm.workflow.content.initiation.scopes"
+                                                 class="answer-group"
+                                                 ng-click="vm.toggleScope(scope)">
+                                                <span ng-class="{'fake-deselected-radio-btn': !scope.chosen,
+                                                'icon-icn_Radio_Selected fake-completed-btn': scope.chosen}">
+                                                    <span class="path1"><span class="path2"></span></span>
+                                                </span>
+                                                <span class="answer-text">{{scope.text}}</span>
+                                            </div>
+                                        </div>
+                                        <div ng-if="vm.workflow.content.initiation.priority === 'standard'"
+                                             class="has-padding-20">
+                                            <span class="regular-text display-inline">Please enter Document / Procedure # </span>
+                                            <input ng-model="vm.workflow.content.initiation.standardNumber" type="text"
+                                                   class="custom-input half-size" placeholder="number"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 panel panel-default has-padding-0">
+                                <div class="panel-heading clearfix">
+                                    <div class="panel-title question-title clearfix">
+                                        <div class="col-md-3 has-padding-0 semi-bold-text">Change Description</div>
+                                    </div>
+                                </div>
+                                <div class="panel-collapse question-panel inner-panel">
+                                    <div class="panel-body">
+                                        <div class="inner-panel has-padding-20" ng-repeat="description in vm.getChangeDescriptionsClone()">
+                                            <div class="has-margin-bottom-10">
+                                                <span class="semi-bold-text">CD{{$index+1}}:</span>
+                                                <div ng-hide="vm.sectionApprovedOrUserNotOwner()" class="pull-right actions-set">
+                                                    <div class="display-inline has-margin-right-10">
+                                                        <file-upload container="description">
+                                                            <img class="add-docs-icon" src="../../../img/paperclip@2x.png" alt="Add document"
+                                                                 ng-disabled="!vm.canAddDocuments(description)"
+                                                                 ng-click="vm.validateAddDocuments(description, $event)"
+                                                            />
+                                                        </file-upload>
+                                                    </div>
+                                                    <span class="icon-icc_delete"
+                                                          ng-click="vm.removeDescription(description)"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12 has-padding-0">
+                                                <textarea rows="1" ng-class="{'disabled': vm.sectionApprovedOrUserNotOwner()}"
+                                                          class="custom-input no-margin change-description full-width"
+                                                          ng-class="{'required-content': vm.descriptionMustBeCompleted(description, $index)}"
+                                                          ng-keyup="vm.expandInput($event)"
+                                                          ng-blur="vm.validateDescription(description, $index)"
+                                                          ng-model="description.text" maxlength="1500"></textarea>
+                                            </div>
+                                            <div class="clearfix">
+                                                <file-list cannot-remove="vm.sectionApprovedOrUserNotOwner" container="description"></file-list>
+                                            </div>
+                                        </div>
+                                        <div ng-hide="vm.sectionApprovedOrUserNotOwner()" class="inner-panel has-padding-20">
+                                            <div class="add-new-dashed-btn" ng-click="vm.addDescription()">
+                                                <span class="icon-icn_create"></span>
+                                                <span>Add Change Description</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 has-padding-0">
+                                <button ng-show="vm.workflow.content.initiation.state === 'approved'" type="button" class="green-btn has-margin-top-10 pull-right disabled">APPROVED</button>
+                                <button ng-hide="vm.sectionApprovedOrUserNotOwner()"
+                                        type="button" class="has-margin-top-10 pull-right"
+                                        ng-class="{'green-btn' : vm.workflow.content.initiation.state === 'started', 'simple-style-btn side-btn': vm.workflow.content.initiation.state === 'approval',
+                                        'disabled': !vm.isAbleToSendForApproval()}"
+                                        ng-click="vm.openSendForModal(vm.getTaskDetails(), 'approve')">{{vm.workflow.content.initiation.state === 'approval' ? 'Edit Approval Request' : 'SEND FOR APPROVAL'}}
+                                </button>
+                                <div class="pull-right has-margin-top-10" ng-show="vm.hasTasks() && !vm.hasCompletedApproveTask">
+                                    <button type="button" class="green-btn has-margin-right-10"
+                                            ng-click="vm.openReviewApproveModal(vm.getTaskDetails(), 'approve')">
+                                        Approve</button>
+                                    <button type="button" class="orange-btn"
+                                            ng-click="vm.openReviewApproveModal(vm.getTaskDetails(), 'reject')">
+                                        Reject</button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 has-padding-0 clearfix">
+                                <div class="approval-entry centered-content" ng-repeat="action in vm.logs | orderBy:'+date' ">
+                                    <workflow-logs action="action" inside-section="true"></workflow-logs>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </uib-accordion-group>
+</div>

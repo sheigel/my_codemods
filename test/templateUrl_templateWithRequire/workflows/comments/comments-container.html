@@ -1,0 +1,31 @@
+<span>
+    <span ng-hide="vm.isReadonly">
+        <div class="comments-action clearfix">
+            <div class="show-comments"
+                 ng-click="vm.toggleComments()">
+                    <span ng-class="{'icon-icc_arrow-down': !vm.visibleComments, 'icon-icc_arrow-up':vm.visibleComments}"></span>
+                <span ng-if="vm.threads.length > 0" class="threads-number">({{vm.threads.length}})</span>
+                <span class="comments-button">Comments</span>
+            </div>
+            <span class="comments-button comments-button--new-thread"
+                  ng-show="vm.visibleComments && vm.permissions.allowed && vm.questionHasThreads()"
+                  ng-click="vm.startNewThread()">Start new thread</span>
+        </div>
+        <div ng-show="vm.threads.length === 0 && vm.visibleComments"
+             class="no-comments">There are no comments for this question
+        </div>
+        <comment-thread ng-repeat="thread in vm.threads"
+                        ng-show="vm.visibleComments"
+                        workflow="vm.workflow" type="vm.type" thread="thread"
+                        section="vm.section" index="vm.index"
+                        question-id="vm.questionId"
+                        allowed="vm.permissions.allowed"
+                        is-owner="vm.permissions.isOwner"></comment-thread>
+    </span>
+    <span ng-show="vm.isReadonly">
+        <div class="comment-thread clearfix" ng-repeat="thread in vm.threads">
+            <comments-list comment="comment" ng-repeat="comment in thread.comments"></comments-list>
+        </div>
+    </span>
+</span>
+

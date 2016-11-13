@@ -1,0 +1,38 @@
+<div>
+    <uib-accordion-group id="step{{vm.index}}" is-open="vm.section.isExpanded">
+        <uib-accordion-heading>
+            <h4 class="question-title">
+                <span class="title">
+                    <span ng-if="vm.afterAssessment">Post-Impact Assessment </span> Implementation
+                </span>
+                <comments-bubble-number sections-group="vm.getSectionsGroup()"></comments-bubble-number>
+                <span class="panel-arrow"></span>
+            </h4>
+        </uib-accordion-heading>
+        <div class="question-panel">
+            <div ng-class="{'disabled-question-area': !vm.workflow.content.implementation.editable}"
+            class="question-area no-padding clearfix">
+                <div class="has-border-bottom has-padding-20 clearfix" ng-repeat="subsection in vm.getSectionsGroup()">
+                    <label class="semi-bold-text">{{$index+1}}. {{subsection.fullName}}</label>
+                    <div class="clearfix">
+                        <file-list cannot-remove="vm.userNotOwner" container="subsection">
+                        </file-list>
+                    </div>
+                    <div class="col-md-12 has-padding-0">
+                        <file-upload class="action-gray-btn add-comments" container="subsection">
+                            <img class="add-docs-icon" src="../../../img/paperclip@2x.png"/>ADD DOCUMENT
+                        </file-upload>
+                    </div>
+                    <div class="col-md-12 has-padding-0">
+                        <comments-container threads="subsection.commentThreads"
+                                            workflow="vm.workflow" type="'question'"
+                                            section="'implementation'" index="$index"
+                                            question-id="null"
+                                            permissions="vm.permissions"
+                                            is-readonly="vm.assessmentIsReadOnly()"></comments-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion-group>
+</div>

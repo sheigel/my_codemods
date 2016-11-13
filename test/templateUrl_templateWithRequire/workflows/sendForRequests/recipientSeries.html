@@ -1,0 +1,18 @@
+<div class="recipient-series-wrapper">
+    <angucomplete-alt id="recipients"
+                      placeholder="Search users and/or user groups"
+                      pause="400"
+                      selected-object="addRecipient"
+                      remote-api-handler="searchUsersAndUserGroups"
+                      title-field="fullName,name"
+                      search-fields="fullName,name"
+                      description-field="email"
+                      clear-selected="true"
+                      input-class="search-field form-control"></angucomplete-alt>
+    <div class="recipients-wrapper">
+        <div class="recipient" ng-repeat="recipient in series">
+            <span>{{recipient.fullName || recipient.name}}</span>
+            <span class="glyphicon glyphicon-remove" ng-click="removeRecipient(recipient)"></span>
+        </div>
+    </div>
+</div>

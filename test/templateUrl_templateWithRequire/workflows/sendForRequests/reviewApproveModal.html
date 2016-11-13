@@ -1,0 +1,24 @@
+<div class="modal-header">
+    <h4 class="modal-title">{{vm.action | capitalize}}</h4>
+    <button type="button" ng-click="vm.closeModal()" class="close-btn">&times;</button>
+</div>
+<form role="form" name="reviewForm" novalidate>
+    <div class="modal-body">
+        <div class="modal-input-group">
+            <label>Name</label>
+            <span class="semi-bold-text">{{vm.taskDetails.user.fullName}}</span>
+        </div>
+        <div ng-if="['approve', 'reject'].indexOf(vm.action) > -1" class="modal-input-group">
+            <label>Password</label>
+            <input type="password" placeholder="Enter your password here" ng-model="vm.password"/>
+        </div>
+        <div class="modal-input-group">
+            <label>Comments</label>
+            <textarea class="comments-area__input" maxlength="1000" placeholder="Enter your comments here" ng-model="vm.comments.text"></textarea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" ng-class="{'green-btn': vm.action !== 'reject', 'orange-btn': vm.action === 'reject'}" ng-click="vm.done()">{{vm.action}}</button>
+        <button type="button" class="simple-style-btn" ng-click="vm.closeModal()">Cancel</button>
+    </div>
+</form>

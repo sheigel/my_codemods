@@ -1,0 +1,36 @@
+<div>
+    <div class="dropdown custom-dropdown answers-dropdown multiple-select-dd" ng-show="!vm.isReadonly">
+        <button class="dropdown-toggle multiple-select-btn" type="button" id="answersOption" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="true">
+            <span class="selected-option">{{vm.selectedCollectionsNames()}}</span>
+            <span class="arrow icon-icc_arrow-down"></span>
+        </button>
+        <ul class="dropdown-menu multiple-select-menu" aria-labelledby="answersOption">
+            <li ng-repeat="collections in vm.collections">
+                <a ng-click="vm.selectCollection(collections, $event)">
+                <span ng-class="{'icon-icn_Checkbox_unchecked': !collections.selected,
+                                 'icon-icn_Checkbox_checked': collections.selected}">
+                    <span class='path1'><span class="path2"></span></span>
+                </span>
+                    <span class="option-name">{{collections.name}}</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="answer-documents-collections-list" ng-hide="!vm.isReadonly">
+        <div class="bold-text">
+            Documents
+        </div>
+        <ul class="multiple-select-menu" aria-labelledby="answersOption">
+            <li ng-repeat="collection in vm.collections">
+                <a ng-click="vm.selectCollection(collection, $event)">
+                <span ng-class="{'icon-icn_Checkbox_unchecked': !collection.selected,
+                                 'icon-icn_Checkbox_checked': collection.selected}">
+                    <span class='path1'><span class="path2"></span></span>
+                </span>
+                    <span class="option-name">{{collection.name}}</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,206 @@
+<div>
+    <uib-accordion-group id="step{{vm.index}}" is-open="vm.section.isExpanded">
+        <uib-accordion-heading>
+            <h4 class="question-title">
+                <span class="title"><span ng-if="vm.afterAssessment">Post-Impact Assessment </span> Implementation Verification</span>
+                <comments-bubble-number
+                        question-groups="vm.workflow.content.implementationVerification.assessment.questionGroups"></comments-bubble-number>
+                <span class="panel-arrow"></span>
+            </h4>
+        </uib-accordion-heading>
+        <div class="question-panel">
+            <div class="question-area no-padding no-borders">
+                <div
+                        ng-repeat="question in vm.workflow.content.implementationVerification.assessment.questionGroups[0].questions"
+                        ng-class="{'disabled-question-area': !vm.workflow.content.implementationVerification.editable}"
+                        class="has-border-bottom has-padding-20 clearfix">
+                    <article class="question clearfix">
+                        <div class="question-text">{{question.text}}</div>
+                        <div class="question-answers">
+                            <div ng-repeat="answer in question.answers">
+                                <div class="answer-group"
+                                     ng-class="{'disabled-events': !vm.permissions.isOwner}">
+                                    <div class="display-inline"
+                                         ng-click="vm.answerSelected(question, answer)">
+                                                        <span ng-if="question.type!=='multiple-choice'"
+                                                              ng-class="{'fake-deselected-radio-btn': !answer.chosen,
+                                                       'icon-icn_Radio_Selected fake-completed-btn': answer.chosen,
+                                                       'orange': answer.text === 'no'}">
+                                                        <span class="path1"></span><span class="path2"></span></span>
+                                                            <span ng-if="question.type==='multiple-choice'"
+                                                                  ng-class="{'icon-icn_Checkbox_unchecked': !answer.chosen,
+                                                       'icon-icn_Checkbox_checked': answer.chosen,
+                                                      'orange': answer.text === 'no'}">
+                                                            <span class="path1"></span><span
+                                                                    class="path2"></span></span>
+                                        <span class="answer-text">{{answer.text}}</span>
+                                    </div>
+                                                        <span class="icon-icn_help" tooltip-placement="right"
+                                                              uib-tooltip="Show/hide the justification for this answer"
+                                                              tooltip-class="custom-tooltip"
+                                                              ng-click="question.toggleJustification(answer)"
+                                                              ng-if="answer.comment === '1' || answer.comment === '2'"
+                                                              ng-show="answer.chosen"></span>
+                                </div>
+                                <div class="implementation-date"
+                                     ng-if="vm.triggerExtraInfo(question, 'datepicker', answer)">
+                                    <label class="regular-text">Date implemented in production for all changes</label>
+                                    <md-datepicker ng-model="answer.date"></md-datepicker>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                    <div class="col-md-12 has-padding-0"
+                         ng-show="vm.workflow.content.implementationVerification.editable">
+                        <comments-container threads="question.commentThreads" section="'implementationVerification'"
+                                            workflow="vm.workflow" type="'question'"
+                                            question-id="question.questionId"
+                                            permissions="vm.permissions"></comments-container>
+                    </div>
+                    <div ng-repeat="q in question.triggeredQuestionGroups[0].questions"
+                         ng-show="question.triggeredQuestionGroups[0].isTriggered">
+                        <article class="question has-margin-top-10 clearfix">
+                            <div class="question-text">{{q.text}}</div>
+                            <div class="question-answers">
+                                <div ng-repeat="answer in q.answers">
+                                    <div class="answer-group"
+                                         ng-class="{'disabled-events': !vm.permissions.isOwner}">
+                                        <div class="display-inline"
+                                             ng-click="vm.answerSelected(q, answer)">
+                                                        <span ng-if="q.type!=='multiple-choice'"
+                                                              ng-class="{'fake-deselected-radio-btn': !answer.chosen,
+                                                       'icon-icn_Radio_Selected fake-completed-btn': answer.chosen,
+                                                       'orange': answer.text === 'no'}">
+                                                        <span class="path1"></span><span class="path2"></span></span>
+                                                            <span ng-if="q.type==='multiple-choice'"
+                                                                  ng-class="{'icon-icn_Checkbox_unchecked': !answer.chosen,
+                                                       'icon-icn_Checkbox_checked': answer.chosen,
+                                                      'orange': answer.text === 'no'}">
+                                                            <span class="path1"></span><span
+                                                                    class="path2"></span></span>
+                                            <span class="answer-text">{{answer.text}}</span>
+                                        </div>
+                                                        <span class="icon-icn_help" tooltip-placement="right"
+                                                              uib-tooltip="Show/hide the justification for this answer"
+                                                              tooltip-class="custom-tooltip"
+                                                              ng-click="q.toggleJustification(answer)"
+                                                              ng-if="answer.comment === '1' || answer.comment === '2'"
+                                                              ng-show="answer.chosen"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                        <div class="col-md-12 has-padding-0"
+                             ng-show="vm.workflow.content.implementationVerification.editable">
+                            <comments-container threads="q.commentThreads" section="'implementationVerification'"
+                                                workflow="vm.workflow" type="'question'"
+                                                question-id="q.questionId"
+                                                permissions="vm.permissions"></comments-container>
+                        </div>
+                        <div ng-repeat="qs in q.triggeredQuestionGroups[0].questions"
+                             ng-show="q.triggeredQuestionGroups[0].isTriggered">
+                            <article class="question has-margin-top-10">
+                                <div class="question-text">{{qs.text}}</div>
+                                <div class="question-answers">
+                                    <div ng-repeat="answer in qs.answers">
+                                        <div class="answer-group"
+                                             ng-class="{'disabled-events': !vm.permissions.isOwner}">
+                                            <div class="display-inline"
+                                                 ng-click="vm.answerSelected(qs, answer)">
+                                                        <span ng-if="qs.type!=='multiple-choice'"
+                                                              ng-class="{'fake-deselected-radio-btn': !answer.chosen,
+                                                       'icon-icn_Radio_Selected fake-completed-btn': answer.chosen,
+                                                       'orange': answer.text === 'no'}">
+                                                        <span class="path1"></span><span class="path2"></span></span>
+                                                            <span ng-if="qs.type==='multiple-choice'"
+                                                                  ng-class="{'icon-icn_Checkbox_unchecked': !answer.chosen,
+                                                       'icon-icn_Checkbox_checked': answer.chosen,
+                                                      'orange': answer.text === 'no'}">
+                                                            <span class="path1"></span><span
+                                                                    class="path2"></span></span>
+                                                <span class="answer-text">{{answer.text}}</span>
+                                            </div>
+                                                        <span class="icon-icn_help" tooltip-placement="right"
+                                                              uib-tooltip="Show/hide the justification for this answer"
+                                                              tooltip-class="custom-tooltip"
+                                                              ng-click="qs.toggleJustification(answer)"
+                                                              ng-if="answer.comment === '1' || answer.comment === '2'"
+                                                              ng-show="answer.chosen"></span>
+                                        </div>
+                                        <div class="clearfix">
+                                            <textarea class="col-md-6 has-margin-bottom-10 has-margin-top-10"
+                                                      placeholder="Please provide a reason"
+                                                      rows="4" type="text" maxlength="100"
+                                                      ng-model="answer.deviationReferences"
+                                                      ng-if="vm.triggerExtraInfo(qs, 'deviations', answer)"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                            <div class="col-md-12 has-padding-0"
+                                 ng-show="vm.workflow.content.implementationVerification.editable">
+                                <comments-container threads="qs.commentThreads" section="'implementationVerification'"
+                                                    workflow="vm.workflow" type="'question'"
+                                                    question-id="qs.questionId"
+                                                    permissions="vm.permissions"></comments-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="question-area no-borders"
+                 ng-if="vm.workflow.content.implementationVerification.editable || vm.workflow.content.implementationVerification.state === 'approved'">
+                <div ng-show="vm.permissions.isOwner"
+                     ng-class="{'disabled-events': vm.workflow.content.implementationVerification.ownerApproved, 'disabled-question-area': !vm.questionsAreAnswered() || vm.workflow.content.implementationVerification.state === 'approved'}"
+                     ng-click="vm.openAskOwnerApprovalModal()">
+                    <span ng-class="{'icon-icn_Checkbox_unchecked': !vm.workflow.content.implementationVerification.ownerApproved,
+                     'icon-icn_Checkbox_checked': vm.workflow.content.implementationVerification.ownerApproved}">
+                        <span class="path1"></span><span class="path2"></span>
+                    </span>
+                    <span>I certify that the change was successfully implemented and all appropriate documentation is attached, scanned and stored into the appropriate location.</span>
+                </div>
+                <div class="centered-content has-margin-top-10">
+                    <div class="comments-area">
+                        <comment-thread thread="vm.workflow.content.implementationVerification.generalComments"
+                                        workflow="vm.workflow" section="'implementationVerification'"
+                                        type="'section'" question-id="null" allowed="vm.permissions.allowed"
+                                        is-owner="vm.permissions.isOwner"></comment-thread>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix has-padding-20 has-border-bottom">
+                <div class="col-md-12 has-padding-0">
+                    <button ng-show="vm.workflow.content.implementationVerification.state === 'approved'" type="button"
+                            class="green-btn has-margin-top-10 pull-right disabled">APPROVED
+                    </button>
+                    <button
+                            ng-hide="vm.workflow.content.implementationVerification.state === 'approved' || !vm.permissions.isOwner"
+                            type="button" class="has-margin-top-10 pull-right"
+                            ng-class="{'green-btn' : vm.workflow.content.implementationVerification.state === 'started', 'simple-style-btn side-btn': vm.workflow.content.implementationVerification.state === 'approval',
+                            'disabled': !vm.workflow.content.implementationVerification.editable || !vm.sectionIsComplete()}"
+                            ng-click="vm.openSendForModal(vm.getTaskDetails(), 'approve')">
+                        {{vm.workflow.content.implementationVerification.state === 'approval' ? 'Edit Approval Request'
+                        : 'SEND
+                        FOR APPROVAL'}}
+                    </button>
+                    <div class="pull-right has-margin-top-10" ng-show="vm.hasTasks() && !vm.hasCompletedApproveTask">
+                        <button type="button" class="green-btn has-margin-right-10"
+                                ng-click="vm.openReviewApproveModal(vm.getTaskDetails(), 'approve')">
+                            Approve
+                        </button>
+                        <button type="button" class="orange-btn"
+                                ng-click="vm.openReviewApproveModal(vm.getTaskDetails(), 'reject')">
+                            Reject
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-12 has-padding-0 clearfix">
+                    <div class="approval-entry centered-content" ng-repeat="action in vm.logs | orderBy:'+date' ">
+                        <workflow-logs action="action" inside-section="true"></workflow-logs>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion-group>
+</div>

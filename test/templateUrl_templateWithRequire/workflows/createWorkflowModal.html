@@ -1,0 +1,79 @@
+<div class="modal-header">
+    <h4 class="modal-title">Initiate</h4>
+    <button type="button" ng-click="vm.closeModal()" class="close-btn">&times;</button>
+</div>
+<form role="form">
+    <div class="modal-body">
+        <div class="modal-input-group">
+            <label>Module</label>
+            <div class="dropdown custom-dropdown">
+                <button class="dropdown-toggle" type="button" id="moduleName" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="true">
+                    <span class="selected-option" ng-class="{'input-note': !vm.selectedModule}">{{vm.selectedModule.name || 'Select module'}}</span>
+                    <span class="arrow icon-icc_arrow-down"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="workflowType">
+                    <li ng-repeat="module in vm.getModules()" ng-click="vm.assignModule(module)">
+                        <a href="#">
+                            <span class="workflow-type-color" ng-style="{'background-color': module.color}"></span>
+                            <span class="option-name">{{module.name}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div ng-show="vm.selectedModule" class="modal-input-group">
+            <label>{{vm.selectedModule.instanceName}} type</label>
+            <div class="dropdown custom-dropdown">
+                <button class="dropdown-toggle" type="button" id="type" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="true">
+                    <span class="selected-option" ng-class="{'input-note': !vm.selectedCategory}">{{vm.selectedCategory || 'Select type'}}</span>
+                    <span class="arrow icon-icc_arrow-down"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="workflowType">
+                    <li ng-repeat="category in vm.getCategories()" ng-click="vm.assignCategory(category)">
+                        <a href="#">
+                            <span class="workflow-type-color workflow-type-color__teal"></span>
+                            <span class="option-name">{{category}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="modal-input-group">
+            <label>System name</label>
+            <div class="dropdown custom-dropdown">
+                <button class="dropdown-toggle" type="button" id="systemName" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="true">
+                    <span class="selected-option" ng-class="{'input-note': !vm.selectedSystem}">{{vm.selectedSystem.name || 'Select system name'}}</span>
+                    <span class="arrow icon-icc_arrow-down"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="systemName">
+                    <li ng-repeat="system in vm.getSystems()" ng-click="vm.assignSystem(system)">
+                        <a href="#">
+                            <span class="option-name">{{system.name}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div  ng-show="vm.selectedModule.hasTargetDate" class="modal-datepicker modal-input-group">
+            <div>
+                <label class="has-note">Target date</label>
+                <span class="input-note"> (optional)</span>
+            </div>
+            <div class="datepicker">
+            <md-datepicker ng-model="vm.targetDate" md-min-date="vm.minDate"></md-datepicker>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="green-btn" ng-click="vm.save()" ng-class="{'inactive': !vm.canCreate()}">
+            create
+        </button>
+        <button type="button" class="simple-style-btn" ng-click="vm.closeModal()">Cancel</button>
+    </div>
+</form>

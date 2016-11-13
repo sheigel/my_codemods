@@ -1,0 +1,26 @@
+<div>
+    <uib-accordion>
+
+        <div ng-repeat="class in vm.assignChangeDescriptions()">
+            <uib-accordion-group id="step" is-open="class.isExpanded">
+                <uib-accordion-heading>
+                    <h4 class="question-title">
+                        <span class="title">{{class.name}}</span>
+                        <span> - {{class.changeDescriptions.length}}</span>
+                        <span class="panel-arrow"></span>
+                    </h4>
+                </uib-accordion-heading>
+                <div class="question-panel">
+                    <div class="inner-heading" ng-repeat="change in class.changeDescriptions">
+                        <span class="bold-text">CD{{change.index+1}}:</span>
+                        <span>{{change.description.text}}</span>
+                    </div>
+                    <div class="question-area clearfix">
+                        <p class="bold-text"> Recommendation for {{class.name}} Level Testing/Documentation:</p>
+                        <p class="has-margin-bottom-10">{{class.recommendation}}</p>
+                    </div>
+                </div>
+            </uib-accordion-group>
+        </div>
+    </uib-accordion>
+</div>

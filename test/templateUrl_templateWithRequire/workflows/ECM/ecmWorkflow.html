@@ -1,0 +1,64 @@
+<div class="main-container">
+    <sections-bar workflow="vm.workflow" sections-collection="vm.workflowSections"
+                  aside-bar-expanded="vm.asideBarExpanded"
+                  steps-details="vm.workflow.content.changeDescriptions"></sections-bar>
+    <article class="section-header table-width section-header-workflow clearfix"
+             ng-class="{'shrinked-header': vm.asideBarExpanded}">
+        <workflow-title name="vm.workflow.name" state="vm.workflow.state"></workflow-title>
+        <actions-button data="vm.workflow" is-owner="vm.permissions.isOwner"></actions-button>
+        <div class="loading-image absolute-loader" ng-if="vm.loading">
+            <img src="../../img/loading.gif" alt="Loading..."/>
+        </div>
+    </article>
+    <section class="section-container clearfix" ng-class="{'shrinked-container': vm.asideBarExpanded}">
+        <div class="workflow-form clearfix table-width centered-content">
+            <workflow-details workflow="vm.workflow"></workflow-details>
+            <uib-accordion>
+
+                <initiation loading="vm.loading" section="vm.getSections()[0]" workflow="vm.workflow"
+                            reorder-sections="vm.reorderSections"
+                            permissions="vm.permissions" user="vm.user" logs="vm.filteredLogs[0]"
+                            accordion-steps="vm.accordionSteps" tasks="vm.filteredTasks[0]"></initiation>
+
+                <div id="sections" ng-repeat='section in vm.getSections()' ng-include='section.name'></div>
+                <script type="text/ng-template" id="Initiation"></script>
+                <script type="text/ng-template" id="Impact Assessment">
+                    <impact-assessment section="section" index="$index" workflow="vm.workflow"
+                                       accordion-steps="vm.accordionSteps"
+                                       permissions="vm.permissions" user="vm.user" logs="vm.filteredLogs[$index]"
+                                       tasks="vm.filteredTasks[$index]"></impact-assessment>
+                </script>
+                <script type="text/ng-template" id="Impact Assessment Summary">
+                    <impact-assessment-summary workflow="vm.workflow" section="section" index="$index"
+                                               permissions="vm.permissions" user="vm.user"
+                                               loading="vm.loading"
+                                               logs="vm.filteredLogs[$index]" tasks="vm.filteredTasks[$index]"
+                    toggle-sections="vm.togglePostImpactSections"></impact-assessment-summary>
+                </script>
+                <script type="text/ng-template" id="Implementation">
+                    <implementation section="section" index="$index" workflow="vm.workflow"
+                                    permissions="vm.permissions" loading="vm.loading"></implementation>
+                </script>
+                <script type="text/ng-template" id="Implementation Verification">
+                    <implementation-verification workflow="vm.workflow" permissions="vm.permissions"
+                                                 user="vm.user" after-assessment="false"
+                                                 section="section" index="$index"
+                                                 logs="vm.filteredLogs[$index]" tasks="vm.filteredTasks[$index]">
+                    </implementation-verification>
+                </script>
+                <script type="text/ng-template" id="Post-Impact Implementation">
+                    <div ng-show="vm.workflow.content.initiation.priority === 'emergency'">
+                        <implementation after-assessment="true" section="section" index="$index"
+                                        workflow="vm.workflow" permissions="vm.permissions"></implementation>
+                    </div>
+                </script>
+                <script type="text/ng-template" id="Post-Impact Implementation Verification">
+                    <div ng-show="vm.workflow.content.initiation.priority === 'emergency'">
+                        <implementation-verification after-assessment="true" section="section"
+                                                     index="$index"></implementation-verification>
+                    </div>
+                </script>
+            </uib-accordion>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,15 @@
+<div class="comment-thread clearfix">
+    <span class="comments-button comments-button--close-thread"
+          ng-if="thread.comments.length > 0 && type === 'question' && !isSummary && isOwner && !thread.isClosed"
+          ng-class="{'closed': thread.isClosed}" ng-click="closeThread()">close thread</span>
+
+    <span ng-if="thread.isClosed" class="comments-button comments-button--close-thread closed">closed thread</span>
+    <form ng-if="!disabledComments && allowed && !thread.isClosed" name="newCommentForm" class="comments-area__input-section clearfix" novalidate>
+        <textarea rows="1" class="comments-area__input comments-area__input-section--inline" ng-model="comment.text"
+                  name="commentText" placeholder="Write your comment here" required></textarea>
+        <span class="action-button pull-right"
+              ng-click="addComment(workflow, thread, section, index)">add comment</span>
+    </form>
+    <div ng-if="!allowed && thread.comments.length === 0" class="no-comments inner-no-comments">There are no comments here.</div>
+    <comments-list comment="comment" ng-repeat="comment in thread.comments"></comments-list>
+</div>

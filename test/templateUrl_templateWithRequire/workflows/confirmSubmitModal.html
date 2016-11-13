@@ -1,0 +1,19 @@
+<div class="center-aligned">
+    <div class="modal-header">
+        <h4 class="modal-title"></h4>
+        <button type="button" ng-click="vm.closeModal()" class="close-btn">&times;</button>
+    </div>
+    <form role="form" novalidate>
+        <div class="modal-body">
+            <p class="semi-bold-text">This workflow has been reviewed by
+                <span class="bold-text">{{vm.reviewStatus.completed}}</span> out of
+                <span class="bold-text">{{vm.reviewStatus.total}}</span> reviewers notified so far.
+            </p>
+            <p>If you submit it now, the remaining requests will be invalidated.</p>
+        </div>
+        <div class="modal-footer center-aligned">
+            <button type="button" class="simple-style-btn" ng-click="vm.submitAssessment()">Ok</button>
+            <button type="button" class="green-btn" ng-click="vm.closeModal()">Cancel</button>
+        </div>
+    </form>
+</div>

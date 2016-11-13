@@ -1,0 +1,125 @@
+<aside class="aside-bar overflow-active--visible" ng-class="{'expanded': vm.expanded}">
+
+    <div class="bar-header" ng-click="vm.toggleBar()">
+        <span class="icon-icn_search"></span>
+        <span class="title">search</span>
+        <span class="icon-icc_arrow-down"></span>
+    </div>
+    <div class="bar-body overflow-active--visible">
+        <div class="filter-wrapper">
+            <label>Search by title</label>
+            <span class="icon-icn_search">
+            <angucomplete-alt id="titleFilter"
+                              placeholder="Enter title"
+                              pause="400"
+                              selected-object="vm.goToWorkflow"
+                              remote-api-handler="vm.searchTitle"
+                              title-field="name"
+                              search-fields="name"
+                              input-class="filters-input filter-search"></angucomplete-alt>
+            </span>
+        </div>
+        <div class="bar-title">
+            <span>filters</span>
+        </div>
+        <div class="filter-wrapper">
+            <label>Initiator</label>
+            <span class="icon-icn_search">
+            <angucomplete-alt id="initiatorFilter"
+                              placeholder="Enter initiator"
+                              pause="400"
+                              selected-object="vm.selectInitiatorFilter"
+                              remote-api-handler="vm.searchInitiator"
+                              title-field="fullName"
+                              search-fields="fullName"
+                              initial-value="vm.filters.initiator.fullName"
+                              input-changed="vm.inputChanged"
+                              input-class="filters-input filter-search"></angucomplete-alt>
+            </span>
+        </div>
+        <div class="filter-wrapper">
+            <label>Initiate date</label>
+            <md-datepicker ng-model="vm.filters.startDate"></md-datepicker>
+        </div>
+        <div class="filter-wrapper">
+            <label>Target date</label>
+            <md-datepicker ng-model="vm.filters.targetDate"></md-datepicker>
+        </div>
+        <div class="filter-wrapper">
+            <label>Module</label>
+
+            <div class="dropdown custom-dropdown">
+                <button class="dropdown-toggle" type="button" id="typeFilter" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="true">
+                    <span class="selected-option">{{vm.filters.module.name || 'Select module type'}}</span>
+                    <span class="arrow icon-icc_arrow-down"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="typeFilter">
+                    <li ng-click="vm.resetFilter('module')">
+                        <a href="#"><span class="bold-text">All</span></a>
+                    </li>
+                    <li ng-if="module.id !== vm.filters.module.id" ng-repeat="module in vm.modules"
+                        ng-click="vm.selectModuleFilter(module)">
+                        <a href="#"><span class="option-name">{{module.name}}</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="filter-wrapper">
+            <label>System name</label>
+
+            <div class="dropdown custom-dropdown">
+                <button class="dropdown-toggle" type="button" id="systemFilter" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="true">
+                    <span class="selected-option">{{vm.filters.system|| 'Select system name'}}</span>
+                    <span class="arrow icon-icc_arrow-down"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="systemFilter">
+                    <li class="bold-text" ng-click="vm.resetFilter('system')">
+                        <a href="#"><span class="bold-text">All</span></a>
+                    </li>
+                    <li ng-if="system !== vm.filters.system" ng-repeat="system in vm.systems"
+                        ng-click="vm.selectSystemFilter(system)">
+                        <a href="#"><span class="option-name">{{system}}</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="filter-wrapper">
+            <label>State</label>
+
+            <div class="dropdown custom-dropdown">
+                <button class="dropdown-toggle" type="button" id="statusFilter" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="true">
+                    <span class="selected-option">{{(vm.filters.state | titleCase) || 'Select state'}}</span>
+                    <span class="arrow icon-icc_arrow-down"></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu__status" aria-labelledby="statusFilter">
+                    <li class="bold-text" ng-click="vm.resetFilter('state')">
+                        <a href="#"><span class="bold-text">All</span></a>
+                    </li>
+                    <li ng-if="workflowState !== vm.filters.state" ng-repeat="workflowState in vm.states"
+                        ng-click="vm.selectStateFilter(workflowState)">
+                        <a href="#"><span class="option-name">{{workflowState}}</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="filter-wrapper" ng-click="vm.toggleMyWorkflows()">
+            <span
+                ng-class="{'icon-icn_Checkbox_unchecked': !vm.myWorkflowsFilterActive, 'icon-icn_Checkbox_checked': vm.myWorkflowsFilterActive}">
+                <span class="path1"></span><span class="path2"></span></span>
+            <span>Initiated by me</span>
+        </div>
+        <div class="filter-wrapper" ng-click="vm.toggleRememberSettings()">
+            <span
+                ng-class="{'icon-icn_Checkbox_unchecked': !vm.rememberOptionActive, 'icon-icn_Checkbox_checked': vm.rememberOptionActive }"><span
+                class="path1"></span><span class="path2"></span></span>
+            <span>Remember my settings</span>
+        </div>
+        <div class="filter-wrapper">
+            <span class="green-btn" ng-click="vm.applyFilters()">Apply</span>
+            <span class="clear-cancel-btn" ng-click="vm.clearAllFilters()">Clear all</span>
+        </div>
+    </div>
+</aside>

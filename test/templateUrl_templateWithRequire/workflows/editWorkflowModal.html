@@ -1,0 +1,16 @@
+<div class="center-aligned">
+    <div class="modal-header">
+        <h4 class="modal-title">Edit Workflow</h4>
+        <button type="button" ng-click="vm.closeModal()" class="close-btn">&times;</button>
+    </div>
+    <form role="form" name="editAssessment" novalidate>
+        <div class="modal-body">
+            <span class="semi-bold-text">Are you sure you want to edit this workflow?</span>
+            <p>The current summary will be invalidated along with its approvals.</p>
+        </div>
+        <div class="modal-footer center-aligned">
+            <button type="button" class="green-btn" ng-click="vm.confirm()">Yes</button>
+            <button type="button" class="simple-style-btn" ng-click="vm.closeModal()">Cancel</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,27 @@
+<aside class="aside-bar" ng-class="{'expanded overflow-active--visible': asideBarExpanded}">
+    <div class="bar-header is-button" ng-click="toggleAsideBar()">
+        <span>sections</span>
+        <span class="icon-icc_arrow-down"></span>
+    </div>
+    <div class="bar-body">
+        <ul class="workflow-steps">
+            <li class="workflow-step" ng-class="{'icon-icn_AssessmentStep_bg': !isSectionComplete(section),
+            'icon-icn_AssessmentStep_Complete': isSectionComplete(section), 'bold-text': section.isExpanded}"
+                ng-repeat="section in sectionsCollection | filter: { isTriggered: true }"
+                ng-click="expandSection(section, $index)">
+
+                <span class="step-number" ng-if="!isSectionComplete(section)">{{$index + 1}}</span>
+                <span class="step-details">Section {{$index + 1}}: {{section.name}}</span>
+                <span class="step-details text-11 ">Completion :
+                    {{section.questions ? (workflow.content.assessment.questionGroupCompletionPercentage(section) | number:0) : 0}}%</span>
+                <ul ng-if="section.name === 'Impact Assessment'" class="workflow-steps">
+                    <li class="workflow-step substep icon-icn_AssessmentStep_bg" ng-repeat="detail in stepsDetails">
+                        <span class="step-number clearfix">{{getCharacterEquivalent($index)}}</span>
+                        <span class="step-details">CD{{$index+1}}</span>
+                        <span class="step-details text-11 has-margin-bottom-10">Completion : 0%</span>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</aside>

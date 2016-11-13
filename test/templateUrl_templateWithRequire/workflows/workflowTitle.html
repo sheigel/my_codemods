@@ -1,0 +1,9 @@
+<div class="section-name workflow-page-name">
+    <span>{{vm.name}}</span>
+
+    <p class="states-wheel is-{{vm.getStateClassName()}}">
+        {{vm.state !== 'started'
+        && vm.state !== 'approved'
+        && vm.state !== 'reviewed'
+        ? 'In' : ''}} {{vm.state | capitalize}}</p>
+</div>

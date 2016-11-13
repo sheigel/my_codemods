@@ -1,0 +1,112 @@
+<div ng-show="vm.showRequestContent">
+    <div class="modal-header">
+        <h4 class="modal-title">Send For {{vm.requestDetails.action === 'approve' ? 'Approval' : 'Review'}}</h4>
+        <button type="button" ng-click="vm.askForConfirmation()" class="close-btn">&times;</button>
+    </div>
+    <form role="form" name="sendForForm" novalidate>
+        <div class="modal-body">
+            <p>Select a predefined group or add and modify your list</p>
+
+            <div class="modal-input-group invitations" ng-if="vm.hasUsersForReviewApprove()">
+                <div ng-show="vm.isCompletedByUsers()">
+                    <label>Already {{vm.requestDetails.action === 'review' ? 'reviewed' : 'approved'}} by</label>
+
+                    <div class="recipient" ng-repeat="user in vm.requestDetails.completedBy">
+                        <span>{{user.fullName}}</span>
+                    </div>
+                </div>
+                <div ng-hide="vm.isCompletedByUsers()" class="invited-email__list">
+                    <span class="input-note">This workflow hasn't been {{vm.requestDetails.action === 'review' ? 'reviewed' : 'approved'}} by anyone yet</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="modal-input-group">
+                        <label>
+                            <span>{{vm.requestDetails.action === 'review' ? 'Reviewers' : 'Approvers'}}</span>
+                            <span class="input-note"> (you can add multiple groups of {{vm.requestDetails.action === 'review' ? 'reviewers' : 'approvers'}}) </span>
+                        </label>
+
+                        <div class="recipients-series clearfix"
+                             ng-class="{'numbered': vm.requestDetails.seriesCollection.length > 1}"
+                             ng-repeat="series in vm.requestDetails.seriesCollection">
+                            <span class="recipients-series-counter"
+                                  ng-show="vm.requestDetails.seriesCollection.length > 1">{{$index+1}}.</span>
+                            <recipient-series series="series"
+                                              series-collection="vm.requestDetails.seriesCollection"></recipient-series>
+                        </div>
+                    </div>
+                    <div class="modal-input-group">
+                        <span class="btn simple-style-btn add-more-series"
+                              ng-click="vm.addSeries()">Add one more series</span>
+                    </div>
+                    <div class="modal-input-group">
+                        <div class="display-inline" ng-click="vm.toggleQaLast()">
+                    <span
+                        ng-class="{'icon-icn_Checkbox_unchecked' : !vm.requestDetails.qaLast, 'icon-icn_Checkbox_checked': vm.requestDetails.qaLast}">
+                        <span class="path1"><span class="path2"></span></span>
+                    </span>
+                            <span class="bold-text">QA last</span>
+                            <span class="input-note"> (order selected QAs <span ng-if="!vm.clientConfigurations.qaLast"> - optional</span>)</span>
+                        </div>
+                    </div>
+                    <div class="modal-datepicker modal-input-group modal-input-group__hasExtra">
+                        <div>
+                            <label class="has-note">Target date</label>
+                            <span ng-if="!vm.clientConfigurations.targetDate" class="input-note">(optional)</span>
+                        </div>
+                        <md-datepicker ng-model="vm.requestDetails.targetDate" md-min-date="vm.minDate"></md-datepicker>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="modal-input-group">
+                        <label class="has-note">Notifications</label>
+                        <span class="input-note"> (notify other users of this action <span ng-if="!vm.clientConfigurations.notifications"> - optional</span>)</span>
+                        <angucomplete-alt id="recipientsNotified"
+                                          placeholder="Enter recipients names or email addresses"
+                                          pause="400"
+                                          selected-object="vm.addRecipientToNotify"
+                                          remote-api-handler="vm.searchUsersAndUserGroups"
+                                          title-field="fullName,name"
+                                          search-fields="fullName,name"
+                                          description-field="email"
+                                          clear-selected="true"
+                                          override-suggestions="true"
+                                          input-class="search-field form-control"></angucomplete-alt>
+                        <div class="recipients-wrapper">
+                            <div class="recipient" ng-repeat="recipient in vm.requestDetails.recipientsToNotify">
+                                <span>{{recipient.fullName || recipient.name || recipient}}</span>
+                            <span class="glyphicon glyphicon-remove"
+                                  ng-click="vm.removeRecipientToNotify(recipient)"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-input-group">
+                        <label class="has-note">Comments</label>
+                        <span ng-if="!vm.clientConfigurations.requestComments" class="input-note"> (optional)</span>
+                    <textarea class="comments-area__input" maxlength="1000" placeholder="Type your comment here"
+                              ng-model="vm.requestDetails.comments"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" ng-class="{'has-series': vm.requestDetails.seriesCollection.length > 1}">
+                <button type="button" class="simple-style-btn pull-right" ng-click="vm.askForConfirmation()">Cancel
+                </button>
+                <button type="button" class="green-btn pull-right" ng-disabled="vm.sendButtonDisabled" ng-class="{'disabled':vm.sendButtonDisabled}" ng-click="vm.send()">Send</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div ng-hide="vm.showRequestContent">
+    <form>
+        <div class="modal-body center-aligned">
+            <p class="semi-bold-text">Are you sure you want to cancel?</p>
+
+            <p>Your modified settings will be lost.</p>
+        </div>
+        <div class="modal-footer center-aligned">
+            <button type="button" class="simple-style-btn" ng-click="vm.closeModal()">Yes</button>
+            <button type="button" class="green-btn" ng-click="vm.goBackToRequest()">No</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,18 @@
+<div class="comment-thread clearfix justification-thread" ng-show="answer.visibleJustification && answer.chosen">
+    <form name="justifyAnswerForm" class="comments-area__input-section clearfix" ng-if="!answer.justification"
+          novalidate>
+        <textarea rows="1" class="comments-area__input comments-area__input-section--inline" ng-if="answer.chosen"
+                  ng-model="justification" name="justificationText" auto-focus
+                  ng-attr-placeholder="{{placeholderMessage}}"
+                  required
+                  ng-blur="alertMissingJustification(answer, justifyAnswerForm.justificationText.$invalid)"
+                  ng-class="{'required-content': missingJustification}"></textarea>
+        <span class="action-button pull-right"
+              ng-click="justifyAnswer(answer, justifyAnswerForm.justificationText.$modelValue)">submit</span>
+    </form>
+    <div class="comment" ng-if="answer.justification">
+        <div class="comment__user">
+            <span class="comment__user-content">{{answer.justification}}</span>
+        </div>
+    </div>
+</div>

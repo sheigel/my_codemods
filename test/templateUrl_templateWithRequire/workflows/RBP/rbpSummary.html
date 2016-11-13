@@ -1,0 +1,168 @@
+<div class="main-container">
+    <sections-bar workflow="vm.summary.workflow"
+                  sections-collection="vm.summary.workflow.content.assessment.questionGroups"
+                  aside-bar-expanded="vm.asideBarExpanded"></sections-bar>
+
+    <article class="section-header table-width section-header-workflow clearfix"
+             ng-class="{ 'shrinked-header': vm.asideBarExpanded }">
+        <workflow-title name="vm.summary.workflow.name + ' - Summary'"
+                        state="vm.summary.workflow.state"></workflow-title>
+
+        <actions-button data="vm.summary" is-owner="vm.permissions.isOwner"></actions-button>
+        <span class="action-button pull-right" ng-if="vm.canEditWorkflow()" ng-click="vm.goToEditWorkflowPage()">edit workflow</span>
+    </article>
+    <section class="section-container clearfix" ng-class="{'shrinked-container': vm.asideBarExpanded}">
+        <div class="summary-workflow has-margin-top table-width centered-content clearfix"
+             ng-repeat="output in vm.summary.outputs">
+            <div class="summary-scores">
+                <div class="summary-scores__item clearfix">
+                    <p class="bold-text">System Criticality Classification Score</p>
+                    <span class="gray-filling">
+                        <span class="workflow-score has-score-{{vm.getRangeLevel(output)}}"
+                              ng-style="{'width': vm.summary.getScoreBarWidth(output) + '%'}">
+                            {{output.score}}
+                        </span>
+                    </span>
+                </div>
+                <div class="summary-scores__item clearfix">
+                    <p class="bold-text">Bussiness Impact and Project Complexity Rating</p>
+                    <span class="gray-filling">
+                        <span class="workflow-score has-score-{{vm.getRangeLevel(output)}} range">
+                            {{output.range.name}}
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <div class="summary-graph">
+                <amchart ng-model='vm.chartData' style="height: 300px!important;">
+                </amchart>
+            </div>
+        </div>
+        <div class="summary-workflow table-width centered-content" ng-if="vm.summary.getVaf()">
+            <p class="summary-workflow__title">Vendor Audit Frequency</p>
+
+            <p>{{vm.summary.getVaf().period}}</p>
+        </div>
+        <div class="workflow-form has-summary clearfix table-width centered-content">
+            <uib-accordion close-others>
+                <uib-accordion-group ng-if="vm.summary.hasDocuments()">
+                    <uib-accordion-heading>
+                        <h4 class="question-title">
+                            Documentation &amp; Deliverables Requirements
+                            <span class="panel-arrow"></span>
+                        </h4>
+                    </uib-accordion-heading>
+                    <div class="question-panel">
+                        <div class="question-area documents-area">
+                            <div ng-repeat="output in vm.summary.outputs">
+                                <div class="question clearfix" ng-show="output.documentCollection.docs.length > 0">
+                                    <div class="question__title">
+                                        <span class="icon-icc_pdf"></span>
+                                        <span class="bold-text">{{ output.documentCollection.name || 'Document collection'}}</span>
+                                    </div>
+                                    <div class="question-answers clearfix">
+                                        <div class="document" ng-class="{'to-check': doc.isRecommended}"
+                                             ng-click="vm.openDocument(doc)"
+                                             ng-repeat="doc in output.documentCollection.docs">
+                                            <img class="document-type"
+                                                 ng-src="../../../img/fileTypes/icc_{{vm.getFileType(doc)}}@2x.png"/>
+                                            <span>{{doc.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </uib-accordion-group>
+
+                <uib-accordion-group id="step{{$index}}" is-open="questionGroup.isExpanded"
+                                     ng-repeat="questionGroup in vm.summary.workflow.content.assessment.questionGroups"
+                                     ng-if="questionGroup.isTriggered === true">
+                    <uib-accordion-heading>
+                        <h4 class="question-title">
+                            <span class="title">Section {{$index+1}}: {{questionGroup.name}}</span>
+                            <comments-bubble-number question-groups="questionGroup"></comments-bubble-number>
+                            <span class="panel-arrow"></span>
+                        </h4>
+                    </uib-accordion-heading>
+
+                    <div class="question-panel" ng-repeat="question in questionGroup.questions">
+                        <div class="workflow-name">
+                            <span>Question {{$index+1}}</span>
+                        </div>
+
+                        <div class="question-area">
+                            <article class="question clearfix">
+                                <div class="question-text">{{question.text}}</div>
+                                <div class="question-answers">
+                                    <div ng-repeat="answer in question.answers">
+                                        <div class="answer-group">
+                                            <div class="display-inline">
+                                                <span ng-if="question.type!=='multiple-choice'"
+                                                      ng-class="{'fake-deselected-radio-btn': !answer.chosen,
+                                                       'icon-icn_Radio_Selected fake-completed-btn': answer.chosen,
+                                                       'orange': answer.text === 'no'}"><span
+                                                    class="path1"></span><span class="path2"></span></span>
+                                                <span ng-if="question.type==='multiple-choice'"
+                                                      ng-class="{'icon-icn_Checkbox_unchecked': !answer.chosen,
+                                                       'icon-icn_Checkbox_checked': answer.chosen,
+                                                       'orange': answer.text === 'no'}"><span
+                                                    class="path1"></span><span class="path2"></span></span>
+
+                                                <span class="answer-text">{{answer.text}}</span>
+                                            </div>
+                                            <span class="icon-icn_help" tooltip-placement="right"
+                                                  uib-tooltip="Show/hide the justification for this answer"
+                                                  tooltip-class="custom-tooltip"
+                                                  ng-click="question.toggleJustification(answer)"
+                                                  ng-if="answer.comment === '1' || answer.comment === '2'"
+                                                  ng-show="answer.chosen"></span>
+                                        </div>
+                                        <justify-answer answer="answer"
+                                                        ng-if="answer.comment === '1' || answer.comment === '2'"></justify-answer>
+                                    </div>
+                                </div>
+                            </article>
+                            <comments-container threads="question.commentThreads"
+                                                workflow="vm.workflow" type="'question'"
+                                                question-group="questionGroup"
+                                                question-id="question.questionId"
+                                                permissions="vm.permissions"
+                                                is-readonly="true"></comments-container>
+                        </div>
+                    </div>
+                </uib-accordion-group>
+            </uib-accordion>
+        </div>
+
+        <div class="table-width centered-content">
+            <div class="comments-area">
+                <label class="comments-area__title">General comments</label>
+                <comment-thread thread="vm.summary.workflow.generalComments" workflow="vm.summary.workflow" type="'workflow'"
+                                question-id="null" allowed="vm.permissions.allowed" is-owner="vm.permissions.isOwner"></comment-thread>
+            </div>
+        </div>
+        <div class="table-width centered-content clearfix">
+            <span class="action-button pull-right has-margin-bottom-20"
+                  ng-if="vm.hasReviewTask(vm.permissions.iHaveTask, vm.permissions.action) && !vm.hasCompletedReviewTask"
+                  ng-click="vm.openReviewApproveModal(vm.getTaskDetails(), 'review')">Review Done</span>
+        </div>
+        <div class="table-width centered-content clearfix has-margin-bottom-20"
+             ng-show="vm.hasApproveTask(vm.permissions.iHaveTask, vm.permissions.action) && !vm.hasCompletedApproveTask
+             && vm.summary.workflow.state === 'approval'">
+            <button type="button" class="orange-btn pull-right"
+                    ng-click="vm.openReviewApproveModal(vm.getTaskDetails(), 'reject')">
+                Reject
+            </button>
+            <button type="button" class="green-btn pull-right has-margin-right-10"
+                    ng-click="vm.openReviewApproveModal(vm.getTaskDetails(), 'approve')">
+                Approve
+            </button>
+        </div>
+
+        <div class="approval-entry table-width centered-content"
+             ng-repeat="action in vm.auditTrailActions | orderBy:'+date' ">
+            <workflow-logs action="action"></workflow-logs>
+        </div>
+    </section>
+</div>

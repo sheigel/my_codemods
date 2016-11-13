@@ -1,0 +1,56 @@
+<div class="main-container">
+
+    <article class="section-header clearfix" ng-class="{'shrinked-header': vm.filtersExpanded}">
+        <div class="section-name">
+            <span class="icon-icc_dashboard"><span>Workspace</span></span>
+
+            <p>Browse existing workflows or create new ones   asdfqwerqwer
+            {{vm.test}}</p>
+        </div>
+        <change-views layout-view="vm.view"></change-views>
+    </article>
+
+    <filters-bar expanded="vm.filtersExpanded" modules="vm.templates" workflows="vm.workflows"
+                 filters="vm.filters" systems="vm.systems"
+                 load-workflows="vm.loadMoreWorkflows"></filters-bar>
+
+    <section class="section-container" ng-class="{'shrinked-container': vm.filtersExpanded}"
+             infinite-scroll="vm.loadMoreWorkflows(vm.filters)"
+             infinite-scroll-distance="1"
+             infinite-scroll-disabled="vm.busyScrolling || vm.done">
+        <article class="section-body clearfix">
+            <div ng-class="{'card-view': vm.view === 'card', 'list-view': vm.view === 'list' }">
+                <div ng-class="{'disabled-area': !vm.isEditor}" class="create-workflow">
+                    <div class="create-workflow-btn" ng-click="vm.openCreateWorkflowModal()"
+                         ng-class="{'condensed-btn': vm.view === 'list' || vm.isScrolledUp}">
+                        <div class="btn-body">
+                            <span class="icon-icn_create"></span>
+                            <p>New</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="workflow-card" ng-repeat="workflow in vm.workflows">
+                    <a class="workflow-inner" ng-click="vm.goToWorkflow(workflow)">
+                        <div class="workflow-name">{{workflow.name}}</div>
+                        <div class="workflow-details">
+                            <p>Initiate date: {{workflow.startDate | formatClientDate}}</p>
+
+                            <p>Target date: {{workflow.targetDate || 'No target date' | formatClientDate}}</p>
+
+                            <p class="workflow-progress">Progress: <span class="bold-text">{{workflow.completionPercentage()}}%</span>
+                            </p>
+                            <p class="states-wheel is-{{vm.getStateClassName(workflow)}}">
+                                {{workflow.state !== 'started' && workflow.state !== 'approved' && workflow.state !==
+                                'reviewed' ? 'In' : ''}}
+                                {{workflow.state | capitalize}}</p>
+                        </div>
+                        <div ng-if="vm.hasSummary(workflow)" class="summary-btn active"></div>
+                    </a>
+                </div>
+            </div>
+            <div class="loading-image" ng-if="vm.busyScrolling">
+                <img src="../../img/loading.gif" alt="Loading..."/>
+            </div>
+        </article>
+    </section>
+</div>

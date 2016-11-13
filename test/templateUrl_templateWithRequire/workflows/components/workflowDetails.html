@@ -1,0 +1,33 @@
+<div class="workflow-card workflow-form-header">
+    <div class="workflow-form-title">
+        <div class="workflow-name"></div>
+    </div>
+    <div class="workflow-details">
+        <div class="info">
+            <div class="info-item">
+                <span class="bold-text"> Type </span>
+                <span>{{vm.workflow.category | titleCase}}</span>
+            </div>
+            <div class="info-item">
+                <span class="bold-text"> Start Date </span>
+                <span>{{vm.workflow.startDate | formatClientDate}}</span>
+            </div>
+            <div class="info-item" ng-if="vm.workflow.module.abbreviation !== 'ECM'">
+                <span class="bold-text"> Target Date </span>
+                <span>{{ vm.workflow.targetDate || "No target date" | formatClientDate}}</span>
+            </div>
+            <div class="info-item">
+                <span class="bold-text"> Status </span>
+                <span>{{vm.workflow.state | titleCase}}</span>
+            </div>
+
+            <div class="info-item">
+                <span class="bold-text"> Owner </span>
+                <span>{{vm.workflow.owner.fullName | titleCase}}</span>
+            </div>
+        </div>
+        <div class="description">
+            {{:: vm.workflow.description}}
+        </div>
+    </div>
+</div>

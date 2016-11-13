@@ -1,0 +1,133 @@
+<div>
+    <uib-accordion-group id="step{{vm.index}}" is-open="vm.section.isExpanded">
+        <uib-accordion-heading>
+            <h4 class="question-title">
+                <span class="title">Impact Assessment</span>
+                <span class="panel-arrow"></span>
+            </h4>
+        </uib-accordion-heading>
+        <div ng-hide="vm.workflow.content.changeDescriptions.length === 0" class="question-panel">
+            <div class="question-area clearfix">
+                <uib-accordion>
+                    <uib-accordion-group class="inner-panel"
+                                         ng-repeat="(cdIndex,description) in vm.workflow.content.changeDescriptions track by $index"
+                                         id="substep{{$index}}" is-open="vm.accordionSteps[$index].isExpanded">
+                        <uib-accordion-heading>
+                            <h4 class="question-title" ng-click="vm.test()">
+                                <span class="title">CD{{$index+1}}</span>
+                                <comments-bubble-number
+                                        question-groups="description.assessment.questionGroups"></comments-bubble-number>
+                                <span class="panel-arrow"></span>
+                            </h4>
+                        </uib-accordion-heading>
+                        <div class="question-panel has-padding-20 gray-panel with-border">
+                            <div class="has-margin-bottom-20 clearfix">
+                                <div>{{description.text}}</div>
+
+                            </div>
+                            <div ng-class="{'disabled-question-area': !vm.workflow.content.impactAssessment.editable}"
+                                 ng-repeat="questionGroup in description.assessment.questionGroups">
+                                <div class="inner-question"
+                                     ng-class="{'disabled-question-area': vm.isNotApprovedButLocked(), 'disabled-events': vm.isNotApprovedButLocked()}"
+                                     ng-repeat="question in questionGroup.questions">
+                                    <div class="workflow-name">
+                                        <span>Question {{$index+1}}</span>
+                                        </span>
+                                    </div>
+                                    <div class="question-area">
+                                        <article class="question clearfix">
+                                            <div class="question-text">{{question.text}}</div>
+                                            <div class="question-answers">
+                                                <div ng-repeat="answer in question.answers">
+                                                    <div class="answer-group"
+                                                         ng-class="{'disabled-events': !vm.permissions.isOwner}">
+                                                        <div class="display-inline"
+                                                             ng-click="vm.answerSelected(question, answer)">
+                                                        <span ng-if="question.type!=='multiple-choice'"
+                                                              ng-class="{'fake-deselected-radio-btn': !answer.chosen,
+                                                       'icon-icn_Radio_Selected fake-completed-btn': answer.chosen,
+                                                       'orange': answer.text === 'no'}">
+                                                        <span class="path1"></span><span class="path2"></span></span>
+                                                            <span ng-if="question.type==='multiple-choice'"
+                                                                  ng-class="{'icon-icn_Checkbox_unchecked': !answer.chosen,
+                                                       'icon-icn_Checkbox_checked': answer.chosen,
+                                                      'orange': answer.text === 'no'}">
+                                                            <span class="path1"></span><span
+                                                                    class="path2"></span></span>
+                                                            <span class="answer-text">{{answer.text}}</span>
+                                                        </div>
+                                                        <span class="icon-icn_help" tooltip-placement="right"
+                                                              uib-tooltip="Show/hide the justification for this answer"
+                                                              tooltip-class="custom-tooltip"
+                                                              ng-click="question.toggleJustification(answer)"
+                                                              ng-if="answer.comment === '1' || answer.comment === '2'"
+                                                              ng-show="answer.chosen"></span>
+                                                    </div>
+                                                    <justify-answer answer="answer" on-submit="vm.submitJustification"
+                                                                    ng-if="answer.comment === '1' || answer.comment === '2'"></justify-answer>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <documents-collections-dropdown
+                                                    ng-if="vm.showDocumentsCollectionDropdown(question)"
+                                                    collections="question.collections"
+                                                    permissions="vm.permissions"
+                                                    is-readonly="vm.assessmentIsReadOnly()"></documents-collections-dropdown>
+                                        </article>
+                                        <comments-container threads="question.commentThreads"
+                                                            workflow="vm.workflow" type="'question'"
+                                                            section="'impactAssessment'" index="cdIndex"
+                                                            question-id="question.questionId"
+                                                            permissions="vm.permissions"
+                                                            is-readonly="vm.assessmentIsReadOnly()"></comments-container>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </uib-accordion-group>
+                </uib-accordion>
+
+                <div ng-show="vm.workflow.content.impactAssessment.editable || vm.workflow.content.impactAssessment.state === 'approved'" class="centered-content has-margin-top-10">
+                    <div class="comments-area">
+                        <label class="comments-area__title">General comments</label>
+                        <comment-thread thread="vm.workflow.content.impactAssessment.generalComments"
+                                        workflow="vm.workflow" section="'impactAssessment'"
+                                        type="'section'" question-id="null" allowed="vm.permissions.allowed"
+                                        is-owner="vm.permissions.isOwner"></comment-thread>
+                    </div>
+                </div>
+
+                <div class="col-md-12 has-padding-0">
+                    <button ng-show="vm.workflow.content.impactAssessment.state === 'approved'" type="button"
+                            class="green-btn has-margin-top-10 pull-right disabled">APPROVED
+                    </button>
+                    <button
+                            ng-hide="vm.workflow.content.impactAssessment.state === 'approved' || !vm.permissions.isOwner"
+                            type="button" class="has-margin-top-10 pull-right"
+                            ng-class="{'green-btn' : vm.workflow.content.impactAssessment.state === 'started', 'simple-style-btn side-btn': vm.workflow.content.impactAssessment.state === 'approval',
+                            'disabled': !vm.workflow.content.impactAssessment.editable || !vm.sectionIsComplete()}"
+                            ng-click="vm.openSendForModal(vm.getTaskDetails(), 'approve')">
+                        {{vm.workflow.content.impactAssessment.state === 'approval' ? 'Edit Approval Request' : 'SEND
+                        FOR APPROVAL'}}
+                    </button>
+                    <div class="pull-right has-margin-top-10" ng-show="vm.hasTasks() && !vm.hasCompletedApproveTask">
+                        <button type="button" class="green-btn has-margin-right-10"
+                                ng-click="vm.openReviewApproveModal(vm.getTaskDetails(), 'approve')">
+                            Approve
+                        </button>
+                        <button type="button" class="orange-btn"
+                                ng-click="vm.openReviewApproveModal(vm.getTaskDetails(), 'reject')">
+                            Reject
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-md-12 has-padding-0 clearfix">
+                    <div class="approval-entry centered-content" ng-repeat="action in vm.logs | orderBy:'+date' ">
+                        <workflow-logs action="action" inside-section="true"></workflow-logs>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </uib-accordion-group>
+</div>
