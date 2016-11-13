@@ -8,6 +8,16 @@ export default function transformer(file, api) {
         statements
     } = j.template;
     const root = j(file.source);
+    const resolveRelativePath = (fromFile, toFile) => {
+        const from = path.dirname(fromFile)
+        const to = './' + toFile
+        const relativePath = `./${path.relative(from, to)}`
+        console.log('from', from)
+        console.log('to', to)
+        console.log('relative path', relativePath);
+        return relativePath;
+    }
+
     return root
         .find(j.Property, {
             key: {
@@ -16,7 +26,7 @@ export default function transformer(file, api) {
         })
         .replaceWith(p => {
             return j.property('init', j.identifier('template'),
-                j.callExpression(j.identifier('require'), [p.node.value]))
+                j.callExpression(j.identifier('require'), [j.literal(resolveRelativePath(file.path, p.node.value.value))]))
         })
         .toSource()
 };
